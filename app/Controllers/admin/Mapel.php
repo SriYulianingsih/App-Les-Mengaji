@@ -36,8 +36,22 @@ class Mapel extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $namaMapel = trim($this->request->getPost('nama_mapel'));
+
+        $namaSudahAda = $this->mapelModel->where('nama_mapel', $namaMapel)->first();
+        if ($namaSudahAda) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Nama Mapel Sudah Dipakai',
+                    'text'  => 'Nama mata pelajaran ini sudah ada di database. Silakan gunakan nama yang berbeda.',
+                    'confirmButtonText' => 'Mengerti',
+                ]);
+        }
+
         $this->mapelModel->save([
-            'nama_mapel' => $this->request->getPost('nama_mapel'),
+            'nama_mapel' => $namaMapel,
             'keterangan' => $this->request->getPost('keterangan'),
         ]);
 
@@ -58,8 +72,32 @@ class Mapel extends BaseController
 
     public function update($id)
     {
+        if (!$this->validate([
+            'nama_mapel' => 'required',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $namaMapel = trim($this->request->getPost('nama_mapel'));
+
+        $namaSudahAda = $this->mapelModel
+            ->where('nama_mapel', $namaMapel)
+            ->where('id !=', $id)
+            ->first();
+
+        if ($namaSudahAda) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Nama Mapel Sudah Dipakai',
+                    'text'  => 'Nama mata pelajaran ini sudah ada di database. Silakan gunakan nama yang berbeda.',
+                    'confirmButtonText' => 'Mengerti',
+                ]);
+        }
+
         $this->mapelModel->update($id, [
-            'nama_mapel' => $this->request->getPost('nama_mapel'),
+            'nama_mapel' => $namaMapel,
             'keterangan' => $this->request->getPost('keterangan'),
         ]);
 

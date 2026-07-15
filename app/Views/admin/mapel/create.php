@@ -7,7 +7,7 @@
         <p class="text-sm text-slate-500 mt-1">Tambahkan materi pelajaran baru ke dalam sistem kurikulum.</p>
     </div>
 
-    <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+    <div class="bg-white rounded-4xl shadow-sm border border-slate-100 overflow-hidden">
         <form action="/admin/mapel/store" method="POST" class="p-8 space-y-6">
             <?= csrf_field() ?>
             <div class="space-y-6">
@@ -15,7 +15,7 @@
                     <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2">Nama Mata Pelajaran <span class="text-rose-500">*</span></label>
                     <div class="relative group">
                         <i class="fas fa-book-open absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm group-focus-within:text-indigo-500 transition-colors"></i>
-                        <input type="text" name="nama_mapel" placeholder="Misal: Fiqih Ibadah" required
+                        <input type="text" name="nama_mapel" value="<?= old('nama_mapel') ?>" placeholder="Misal: Fiqih Ibadah" required
                                class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all font-bold text-slate-700">
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                     <div class="relative group">
                         <i class="fas fa-align-left absolute left-4 top-5 text-slate-400 text-sm group-focus-within:text-indigo-500 transition-colors"></i>
                         <textarea name="keterangan" rows="3" placeholder="Jelaskan sedikit tentang mapel ini..."
-                                  class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all font-medium text-slate-700"></textarea>
+                                  class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all font-medium text-slate-700"><?= old('keterangan') ?></textarea>
                     </div>
                 </div>
             </div>
