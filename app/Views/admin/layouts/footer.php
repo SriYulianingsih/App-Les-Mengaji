@@ -30,3 +30,17 @@
 
     </div>
 </footer>
+
+<?php $popupError = session()->getFlashdata('popup_error'); ?>
+<?php if ($popupError) : ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Data Duplikat',
+            text: <?= json_encode($popupError) ?>,
+            confirmButtonText: 'OK'
+        });
+    });
+</script>
+<?php endif; ?>

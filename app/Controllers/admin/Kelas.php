@@ -50,9 +50,23 @@ class Kelas extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $namaKelas = trim($this->request->getPost('nama_kelas'));
+        $tingkat = trim($this->request->getPost('tingkat'));
+
+        $duplikat = $this->kelasModel
+            ->where('nama_kelas', $namaKelas)
+            ->where('tingkat', $tingkat)
+            ->first();
+
+        if ($duplikat) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_error', 'Data kelas dengan nama dan jenjang yang sama sudah ada di database.');
+        }
+
         $this->kelasModel->save([
-            'nama_kelas' => $this->request->getPost('nama_kelas'),
-            'tingkat'    => $this->request->getPost('tingkat'),
+            'nama_kelas' => $namaKelas,
+            'tingkat'    => $tingkat,
         ]);
 
         return redirect()->to('/admin/kelas')->with('success', 'Data kelas berhasil ditambahkan.');
@@ -83,9 +97,24 @@ class Kelas extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $namaKelas = trim($this->request->getPost('nama_kelas'));
+        $tingkat = trim($this->request->getPost('tingkat'));
+
+        $duplikat = $this->kelasModel
+            ->where('nama_kelas', $namaKelas)
+            ->where('tingkat', $tingkat)
+            ->where('id !=', $id)
+            ->first();
+
+        if ($duplikat) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_error', 'Data kelas dengan nama dan jenjang yang sama sudah ada di database.');
+        }
+
         $this->kelasModel->update($id, [
-            'nama_kelas' => $this->request->getPost('nama_kelas'),
-            'tingkat'    => $this->request->getPost('tingkat'),
+            'nama_kelas' => $namaKelas,
+            'tingkat'    => $tingkat,
         ]);
 
         return redirect()->to('/admin/kelas')->with('success', 'Data kelas berhasil diupdate.');
