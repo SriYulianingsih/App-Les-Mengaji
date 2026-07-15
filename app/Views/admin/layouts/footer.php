@@ -31,15 +31,25 @@
     </div>
 </footer>
 
-<?php $popupError = session()->getFlashdata('popup_error'); ?>
-<?php if ($popupError) : ?>
+<?php $popupAlert = session()->getFlashdata('popup_alert'); ?>
+<?php if ($popupAlert) : ?>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         Swal.fire({
-            icon: 'error',
-            title: 'Data Duplikat',
-            text: <?= json_encode($popupError) ?>,
-            confirmButtonText: 'OK'
+            icon: <?= json_encode($popupAlert['icon'] ?? 'warning') ?>,
+            title: <?= json_encode($popupAlert['title'] ?? 'Perhatian') ?>,
+            text: <?= json_encode($popupAlert['text'] ?? '') ?>,
+            confirmButtonText: <?= json_encode($popupAlert['confirmButtonText'] ?? 'OK') ?>,
+            confirmButtonColor: '#4f46e5',
+            width: '420px',
+            padding: '1.5rem',
+            background: '#ffffff',
+            color: '#0f172a',
+            customClass: {
+                popup: 'rounded-3xl shadow-2xl border border-slate-100',
+                title: 'text-xl font-extrabold tracking-tight',
+                htmlContainer: 'text-sm leading-relaxed text-slate-600'
+            }
         });
     });
 </script>

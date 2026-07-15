@@ -53,15 +53,28 @@ class Kelas extends BaseController
         $namaKelas = trim($this->request->getPost('nama_kelas'));
         $tingkat = trim($this->request->getPost('tingkat'));
 
-        $duplikat = $this->kelasModel
-            ->where('nama_kelas', $namaKelas)
-            ->where('tingkat', $tingkat)
-            ->first();
-
-        if ($duplikat) {
+        $namaSudahAda = $this->kelasModel->where('nama_kelas', $namaKelas)->first();
+        if ($namaSudahAda) {
             return redirect()->back()
                 ->withInput()
-                ->with('popup_error', 'Data kelas dengan nama dan jenjang yang sama sudah ada di database.');
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Nama Kelas Sudah Dipakai',
+                    'text'  => 'Nama kelas tersebut sudah ada di database. Silakan gunakan nama kelas yang berbeda.',
+                    'confirmButtonText' => 'Mengerti',
+                ]);
+        }
+
+        $tingkatSudahAda = $this->kelasModel->where('tingkat', $tingkat)->first();
+        if ($tingkatSudahAda) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Jenjang Sudah Dipakai',
+                    'text'  => 'Jenjang pendidikan ini sudah terdaftar. Silakan pilih jenjang yang berbeda.',
+                    'confirmButtonText' => 'Mengerti',
+                ]);
         }
 
         $this->kelasModel->save([
@@ -100,16 +113,36 @@ class Kelas extends BaseController
         $namaKelas = trim($this->request->getPost('nama_kelas'));
         $tingkat = trim($this->request->getPost('tingkat'));
 
-        $duplikat = $this->kelasModel
+        $namaSudahAda = $this->kelasModel
             ->where('nama_kelas', $namaKelas)
+            ->where('id !=', $id)
+            ->first();
+
+        if ($namaSudahAda) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Nama Kelas Sudah Dipakai',
+                    'text'  => 'Nama kelas tersebut sudah ada di database. Silakan gunakan nama kelas yang berbeda.',
+                    'confirmButtonText' => 'Mengerti',
+                ]);
+        }
+
+        $tingkatSudahAda = $this->kelasModel
             ->where('tingkat', $tingkat)
             ->where('id !=', $id)
             ->first();
 
-        if ($duplikat) {
+        if ($tingkatSudahAda) {
             return redirect()->back()
                 ->withInput()
-                ->with('popup_error', 'Data kelas dengan nama dan jenjang yang sama sudah ada di database.');
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Jenjang Sudah Dipakai',
+                    'text'  => 'Jenjang pendidikan ini sudah terdaftar. Silakan pilih jenjang yang berbeda.',
+                    'confirmButtonText' => 'Mengerti',
+                ]);
         }
 
         $this->kelasModel->update($id, [

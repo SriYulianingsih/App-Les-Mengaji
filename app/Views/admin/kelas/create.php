@@ -43,18 +43,19 @@
                         <select name="tingkat" id="tingkat" required
                                 class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all appearance-none cursor-pointer font-bold text-slate-700">
                             <option value="">-- Pilih Jenjang --</option>
+                            <?php $selectedTingkat = old('tingkat'); ?>
                             <optgroup label="Dasar & Tahsin">
-                                <option value="Iqra" <?= old('tingkat') == 'Iqra' ? 'selected' : '' ?>>Program Iqra'</option>
-                                <option value="Tahsin" <?= old('tingkat') == 'Tahsin' ? 'selected' : '' ?>>Tahsin Tilawah</option>
+                                <option value="Iqra" <?= $selectedTingkat == 'Iqra' ? 'selected' : '' ?>>Program Iqra'</option>
+                                <option value="Tahsin" <?= $selectedTingkat == 'Tahsin' ? 'selected' : '' ?>>Tahsin Tilawah</option>
                             </optgroup>
                             <optgroup label="Madrasah Diniyyah">
-                                <option value="Awaliyah" <?= old('tingkat') == 'Awaliyah' ? 'selected' : '' ?>>Diniyyah Awaliyah</option>
-                                <option value="Wustha" <?= old('tingkat') == 'Wustha' ? 'selected' : '' ?>>Diniyyah Wustha</option>
-                                <option value="Ulya" <?= old('tingkat') == 'Ulya' ? 'selected' : '' ?>>Diniyyah Ulya</option>
+                                <option value="Awaliyah" <?= $selectedTingkat == 'Awaliyah' ? 'selected' : '' ?>>Diniyyah Awaliyah</option>
+                                <option value="Wustha" <?= $selectedTingkat == 'Wustha' ? 'selected' : '' ?>>Diniyyah Wustha</option>
+                                <option value="Ulya" <?= $selectedTingkat == 'Ulya' ? 'selected' : '' ?>>Diniyyah Ulya</option>
                             </optgroup>
                             <optgroup label="Tahfidz & Kitab">
-                                <option value="Tahfidz" <?= old('tingkat') == 'Tahfidz' ? 'selected' : '' ?>>Tahfidz Al-Qur'an</option>
-                                <option value="Kitab" <?= old('tingkat') == 'Kitab' ? 'selected' : '' ?>>Kajian Kitab Kuning</option>
+                                <option value="Tahfidz" <?= $selectedTingkat == 'Tahfidz' ? 'selected' : '' ?>>Tahfidz Al-Qur'an</option>
+                                <option value="Kitab" <?= $selectedTingkat == 'Kitab' ? 'selected' : '' ?>>Kajian Kitab Kuning</option>
                             </optgroup>
                         </select>
                         <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none"></i>
