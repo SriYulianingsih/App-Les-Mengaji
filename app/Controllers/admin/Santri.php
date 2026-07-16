@@ -57,9 +57,34 @@ class Santri extends BaseController
 
     public function store()
     {
-        // Validasi: is_unique pada orangtua_id DIHAPUS agar 1 ortu bisa punya banyak santri
+        $nis = trim((string) $this->request->getPost('nis'));
+        $nama = trim((string) $this->request->getPost('nama'));
+
+        if ($this->santriFieldExists('nis', $nis)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'NIS telah ada',
+                    'text' => 'Nomor induk santri ini sudah digunakan di database.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
+        if ($this->santriFieldExists('nama', $nama)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Nama telah digunakan',
+                    'text' => 'Nama santri ini sudah ada di database.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
+        // Validasi: orangtua_id, status, dan kelas boleh sama antar santri
         if (!$this->validate([
-            'nis'         => 'required|is_unique[santri.nis]|min_length[3]',
+            'nis'         => 'required|min_length[3]',
             'nama'        => 'required|min_length[3]',
             'orangtua_id' => 'required|numeric',
             'kelas_id'    => 'required|numeric',
@@ -77,8 +102,8 @@ class Santri extends BaseController
         }
 
         $this->santri->save([
-            'nis'                 => $this->request->getPost('nis'),
-            'nama'                => $this->request->getPost('nama'),
+            'nis'                 => $nis,
+            'nama'                => $nama,
             'orangtua_id'         => $this->request->getPost('orangtua_id'),
             'kelas_id'            => $this->request->getPost('kelas_id'),
             'jenis_kelamin'       => $this->request->getPost('jenis_kelamin'),
@@ -111,9 +136,34 @@ class Santri extends BaseController
 
     public function update($id)
     {
-        // Validasi: is_unique hanya untuk NIS (kecuali ID santri itu sendiri)
+        $nis = trim((string) $this->request->getPost('nis'));
+        $nama = trim((string) $this->request->getPost('nama'));
+
+        if ($this->santriFieldExists('nis', $nis, (int) $id)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'NIS telah ada',
+                    'text' => 'Nomor induk santri ini sudah digunakan di database.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
+        if ($this->santriFieldExists('nama', $nama, (int) $id)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Nama telah digunakan',
+                    'text' => 'Nama santri ini sudah ada di database.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
+        // Validasi: orangtua_id, status, dan kelas boleh sama antar santri
         if (!$this->validate([
-            'nis'         => "required|is_unique[santri.nis,id,{$id}]",
+            'nis'         => 'required|min_length[3]',
             'nama'        => 'required',
             'orangtua_id' => 'required|numeric',
             'kelas_id'    => 'required',
@@ -135,8 +185,8 @@ class Santri extends BaseController
         }
 
         $this->santri->update($id, [
-            'nis'                 => $this->request->getPost('nis'),
-            'nama'                => $this->request->getPost('nama'),
+            'nis'                 => $nis,
+            'nama'                => $nama,
             'orangtua_id'         => $this->request->getPost('orangtua_id'),
             'kelas_id'            => $this->request->getPost('kelas_id'),
             'jenis_kelamin'       => $this->request->getPost('jenis_kelamin'),
@@ -178,5 +228,16 @@ class Santri extends BaseController
             return redirect()->back()->with('success', 'Data berhasil dihapus');
         }
         return redirect()->back()->with('error', 'Data tidak ditemukan');
+    }
+
+    private function santriFieldExists(string $field, string $value, ?int $ignoreId = null): bool
+    {
+        $builder = $this->santri->where($field, $value);
+
+        if ($ignoreId !== null) {
+            $builder->where('id !=', $ignoreId);
+        }
+
+        return $builder->first() !== null;
     }
 }
