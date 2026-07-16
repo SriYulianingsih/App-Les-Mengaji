@@ -51,12 +51,25 @@
             <p class="text-sm text-slate-500 mt-1 mb-6">Klik tombol di kanan atas untuk menambahkan jadwal pelajaran pertama.</p>
         </div>
     <?php else : ?>
-        
+        <?php
+            $hariUrutan = ['Senin' => 0, 'Selasa' => 1, 'Rabu' => 2, 'Kamis' => 3, 'Jumat' => 4, 'Sabtu' => 5, 'Minggu' => 6];
+            $jadwalSort = $jadwal;
+
+            usort($jadwalSort, function ($a, $b) use ($hariUrutan) {
+                $nilaiA = $hariUrutan[$a['hari']] ?? 999;
+                $nilaiB = $hariUrutan[$b['hari']] ?? 999;
+
+                if ($nilaiA === $nilaiB) {
+                    return strcmp($a['jam_mulai'], $b['jam_mulai']);
+                }
+
+                return $nilaiA <=> $nilaiB;
+            });
+        ?>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            <?php foreach ($jadwal as $j) : ?>
+            <?php foreach ($jadwalSort as $j) : ?>
                 <div class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 overflow-hidden flex flex-col justify-between group">
-                    
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-5">
                             <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider bg-slate-100 text-slate-600">
@@ -115,10 +128,8 @@
                             </a>
                         </div>
                     </div>
-
                 </div>
             <?php endforeach; ?>
-
         </div>
     <?php endif; ?>
 </div>

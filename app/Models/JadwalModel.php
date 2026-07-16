@@ -21,6 +21,8 @@ class JadwalModel extends Model
             ->join('guru', 'guru.id = jadwal.guru_id')
             ->join('mapel', 'mapel.id = jadwal.mapel_id', 'left')
             ->join('kelas', 'kelas.id = jadwal.kelas_id', 'left')
+            ->orderBy("FIELD(hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')")
+            ->orderBy('jam_mulai', 'ASC')
             ->findAll();
     }
 }
