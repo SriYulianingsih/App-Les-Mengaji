@@ -69,8 +69,12 @@ class AkunController extends BaseController
     // 3. PROSES SIMPAN AKUN
     public function store()
     {
+        $username = trim($this->request->getPost('username'));
+        $password = trim($this->request->getPost('password'));
+        $role = $this->request->getPost('role');
+
         $rules = [
-            'username' => 'required|is_unique[users.username]|min_length[4]',
+            'username' => 'required|min_length[4]',
             'password' => 'required|min_length[6]',
             'role'     => 'required'
         ];
@@ -79,11 +83,35 @@ class AkunController extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $role = $this->request->getPost('role');
-        
+        $existingUsername = $this->userModel->where('username', $username)->first();
+        if ($existingUsername) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Username sudah ada',
+                    'text' => 'Username ini sudah terdaftar di database. Silakan gunakan username lain.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
+        $allUsers = $this->userModel->findAll();
+        foreach ($allUsers as $user) {
+            if (!empty($user['password']) && password_verify($password, $user['password'])) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('popup_alert', [
+                        'icon' => 'warning',
+                        'title' => 'Password sudah ada',
+                        'text' => 'Password ini sudah digunakan oleh akun lain di database. Silakan gunakan password yang berbeda.',
+                        'confirmButtonText' => 'OK',
+                    ]);
+            }
+        }
+
         $userData = [
-            'username' => $this->request->getPost('username'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+            'username' => $username,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
             'role'     => $role
         ];
 
@@ -130,12 +158,14 @@ class AkunController extends BaseController
     // 6. PROSES UPDATE AKUN
     public function update($id)
     {
+        $username = trim($this->request->getPost('username'));
+        $newPassword = trim($this->request->getPost('password'));
+
         $rules = [
-            'username' => "required|is_unique[users.username,id,{$id}]|min_length[4]"
+            'username' => "required|min_length[4]"
         ];
 
-        // Validasi password hanya jika diisi
-        if ($this->request->getPost('password')) {
+        if ($newPassword) {
             $rules['password'] = 'min_length[6]';
         }
 
@@ -143,14 +173,25 @@ class AkunController extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $existingUsername = $this->userModel->where('username', $username)->where('id !=', $id)->first();
+        if ($existingUsername) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Username sudah ada',
+                    'text' => 'Username ini sudah terdaftar di database. Silakan gunakan username lain.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
         $userData = [
             'id' => $id,
-            'username' => $this->request->getPost('username')
+            'username' => $username
         ];
 
-        // Jika password diisi, enkripsi dan masukkan ke array
-        if ($this->request->getPost('password')) {
-            $userData['password'] = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
+        if ($newPassword) {
+            $userData['password'] = password_hash($newPassword, PASSWORD_DEFAULT);
         }
 
         $this->userModel->save($userData);
