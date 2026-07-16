@@ -115,8 +115,8 @@
                         </td>
                         <td class="px-6 py-4">
                             <span
-                                class="px-2.5 py-1 text-xs font-bold rounded-full inline-block <?= $g['status'] == 'aktif' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100' ?>">
-                                <?= ucfirst((string)esc($g['status'])) ?>
+                                class="px-2.5 py-1 text-xs font-bold rounded-full inline-block <?= $g['status'] == 'aktif' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-500' ?>">
+                                <?= esc($g['status']) ? ucfirst($g['status']) : 'Belum Aktif' ?>
                             </span>
                         </td>
                         <td class="px-6 py-4">
