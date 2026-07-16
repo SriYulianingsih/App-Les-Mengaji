@@ -49,9 +49,22 @@ class Guru extends BaseController
 
     public function store()
     {
+        $nip = trim((string) $this->request->getPost('nip'));
+
+        if ($this->guruNipExists($nip)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'NIP telah digunakan',
+                    'text' => 'NIP guru ini sudah ada di database.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
         // 1. Aturan validasi: 'user_id' dihapus dari list required!
         if (!$this->validate([
-            'nip'  => 'required|is_unique[guru.nip]',
+            'nip'  => 'required',
             'nama' => 'required',
             'foto' => 'max_size[foto,2048]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png]'
         ])) {
@@ -71,7 +84,7 @@ class Guru extends BaseController
 
         $this->guru->save([
             'user_id'       => $userId, // Berhasil dinull-kan jika kosong
-            'nip'           => $this->request->getPost('nip'),
+            'nip'           => $nip,
             'nama'          => $this->request->getPost('nama'),
             'jenis_kelamin' => $this->request->getPost('jenis_kelamin'),
             'no_hp'         => $this->request->getPost('no_hp'),
@@ -98,8 +111,21 @@ class Guru extends BaseController
 
     public function update($id)
     {
+        $nip = trim((string) $this->request->getPost('nip'));
+
+        if ($this->guruNipExists($nip, (int) $id)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'NIP telah digunakan',
+                    'text' => 'NIP guru ini sudah ada di database.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
         if (!$this->validate([
-            'nip'  => "required|is_unique[guru.nip,id,{$id}]",
+            'nip'  => 'required',
             'nama' => 'required',
             'foto' => 'max_size[foto,2048]|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png]'
         ])) {
@@ -120,7 +146,7 @@ class Guru extends BaseController
 
         // Pertahankan user_id yang lama saat update profil guru
         $this->guru->update($id, [
-            'nip'           => $this->request->getPost('nip'),
+            'nip'           => $nip,
             'nama'          => $this->request->getPost('nama'),
             'jenis_kelamin' => $this->request->getPost('jenis_kelamin'),
             'no_hp'         => $this->request->getPost('no_hp'),
@@ -162,5 +188,16 @@ class Guru extends BaseController
             return redirect()->back()->with('success', 'Data berhasil dihapus');
         }
         return redirect()->back()->with('error', 'Data tidak ditemukan');
+    }
+
+    private function guruNipExists(string $nip, ?int $ignoreId = null): bool
+    {
+        $builder = $this->guru->where('nip', $nip);
+
+        if ($ignoreId !== null) {
+            $builder->where('id !=', $ignoreId);
+        }
+
+        return $builder->first() !== null;
     }
 }
