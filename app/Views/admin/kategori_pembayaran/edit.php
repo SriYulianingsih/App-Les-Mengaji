@@ -14,7 +14,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2">Nama Kategori</label>
-                    <input type="text" name="nama_kategori" value="<?= esc($kategori['nama_kategori']) ?>" required
+                    <input type="text" name="nama_kategori" value="<?= esc(old('nama_kategori') ?? $kategori['nama_kategori']) ?>" required
                            class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-slate-700 transition-all">
                 </div>
                 <div>
@@ -22,7 +22,7 @@
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400">Rp</span>
                         <input type="text" id="rupiah" name="nominal_std" 
-                               value="<?= number_format($kategori['nominal_std'], 0, ',', '.') ?>" required
+                               value="<?= esc(old('nominal_std') ?? number_format($kategori['nominal_std'], 0, ',', '.')) ?>" required
                                class="w-full pl-12 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none font-black text-slate-700 transition-all">
                     </div>
                 </div>

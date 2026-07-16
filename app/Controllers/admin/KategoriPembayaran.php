@@ -30,12 +30,25 @@ class KategoriPembayaran extends BaseController
 
     public function store()
     {
+        $namaKategori = trim((string) $this->request->getPost('nama_kategori'));
+
+        if ($this->kategoriExists($namaKategori)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Jenis biaya sudah ada',
+                    'text' => 'Jenis biaya tools telah ada di database.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
         // Bersihkan titik dari nominal sebelum simpan (100.000 -> 100000)
         $nominalRaw = $this->request->getPost('nominal_std');
         $nominalClean = str_replace(['.', ','], '', $nominalRaw);
 
         $this->kategoriModel->save([
-            'nama_kategori' => $this->request->getPost('nama_kategori'),
+            'nama_kategori' => $namaKategori,
             'nominal_std'   => $nominalClean,
         ]);
 
@@ -53,12 +66,25 @@ class KategoriPembayaran extends BaseController
 
     public function update($id)
     {
+        $namaKategori = trim((string) $this->request->getPost('nama_kategori'));
+
+        if ($this->kategoriExists($namaKategori, (int) $id)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('popup_alert', [
+                    'icon' => 'warning',
+                    'title' => 'Jenis biaya sudah ada',
+                    'text' => 'Jenis biaya tools telah ada di database.',
+                    'confirmButtonText' => 'OK',
+                ]);
+        }
+
         // Bersihkan titik dari nominal sebelum update
         $nominalRaw = $this->request->getPost('nominal_std');
         $nominalClean = str_replace(['.', ','], '', $nominalRaw);
 
         $this->kategoriModel->update($id, [
-            'nama_kategori' => $this->request->getPost('nama_kategori'),
+            'nama_kategori' => $namaKategori,
             'nominal_std'   => $nominalClean,
         ]);
 
@@ -69,5 +95,16 @@ class KategoriPembayaran extends BaseController
     {
         $this->kategoriModel->delete($id);
         return redirect()->to('/admin/kategori-pembayaran')->with('success', 'Kategori berhasil dihapus.');
+    }
+
+    private function kategoriExists(string $namaKategori, ?int $ignoreId = null): bool
+    {
+        $builder = $this->kategoriModel->where('nama_kategori', $namaKategori);
+
+        if ($ignoreId !== null) {
+            $builder->where('id !=', $ignoreId);
+        }
+
+        return $builder->first() !== null;
     }
 }
