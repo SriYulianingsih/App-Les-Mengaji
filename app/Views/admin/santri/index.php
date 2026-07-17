@@ -150,7 +150,7 @@
         </div>
     </div>
 
-    <div class="mt-8 flex justify-center">
+    <div class="mt-6 flex justify-end">
         <?= $pager->links('santri', 'default_full') ?>
     </div>
 </div>
@@ -170,6 +170,61 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.6rem;
+    height: 2.6rem;
+    padding: 0 0.8rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 9999px;
+    background: #ffffff;
+    color: #475569;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.pagination .page-link:hover {
+    border-color: #8b5cf6;
+    color: #6d28d9;
+    box-shadow: 0 8px 20px rgba(109, 40, 217, 0.12);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    border-color: #7c3aed;
+    color: #ffffff;
+    box-shadow: 0 10px 24px rgba(124, 58, 237, 0.25);
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+    background: #f8fafc;
+}
+
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+    min-width: 5rem;
+    padding: 0 1rem;
 }
 </style>
 <?= $this->endSection() ?>
