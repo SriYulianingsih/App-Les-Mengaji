@@ -4,8 +4,8 @@
 <div class="container mx-auto p-6 max-w-7xl">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Manajemen Guru</h1>
-            <p class="text-sm text-gray-500 mt-1">Kelola data tenaga pengajar aktif dan non-aktif di sini.</p>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Kelola Data Guru</h1>
+            <p class="text-sm text-gray-500 mt-1">Data tenaga pengajar aktif dan non-aktif di sini.</p>
         </div>
         <a href="/admin/guru/create"
             class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-medium px-5 py-2.5 rounded-xl text-sm flex items-center shadow-lg shadow-indigo-100 transition-all duration-200 transform hover:-translate-y-0.5">

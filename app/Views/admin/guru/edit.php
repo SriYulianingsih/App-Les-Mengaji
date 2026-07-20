@@ -7,14 +7,6 @@
             <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Edit Guru</h1>
             <p class="text-sm text-gray-500 mt-1">Perbarui data profil tenaga pengajar yang bersangkutan.</p>
         </div>
-        <a href="/admin/guru"
-            class="text-gray-600 hover:text-gray-900 flex items-center text-sm font-medium bg-gray-50 px-4 py-2 rounded-lg hover:bg-gray-100 transition-all border border-gray-100">
-            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-                </path>
-            </svg>
-            Kembali ke List
-        </a>
     </div>
 
     <?php if (session()->getFlashdata('errors')) : ?>
@@ -146,11 +138,12 @@
             </div>
         </div>
 
-        <div class="flex justify-end mt-4">
+        <div class="flex justify-end gap-3 pt-4">
+            <a href="/admin/guru"
+                class="bg-white text-gray-700 px-6 py-2.5 rounded-xl hover:bg-gray-50 border border-gray-200 transition-all text-sm font-medium">Batal</a>
             <button type="submit"
-                class="bg-linear-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold px-6 py-2.5 rounded-lg text-sm shadow-md shadow-indigo-100 transition-all duration-200 transform hover:-translate-y-0.5">
-                Update Data Guru
-            </button>
+                class="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-medium px-8 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-100 transition-all duration-200 transform hover:-translate-y-0.5">Simpan
+                Perubahan</button>
         </div>
     </form>
 </div>

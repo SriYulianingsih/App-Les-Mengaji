@@ -4,9 +4,8 @@
 <div class="container mx-auto p-6 max-w-7xl">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Manajemen Santri</h1>
-            <p class="text-sm text-slate-500 mt-1">Total terdaftar: <span
-                    class="font-bold text-indigo-600">Terdata</span> di sistem pesantren.</p>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Kelola Data Santri</h1>
+            <p class="text-sm text-slate-500 mt-1">Terdata di sistem les mengaji.</p>
         </div>
         <a href="/admin/santri/create"
             class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold px-6 py-3 rounded-2xl text-sm flex items-center shadow-lg shadow-indigo-100 transition-all duration-200 transform hover:-translate-y-1 active:scale-95">
