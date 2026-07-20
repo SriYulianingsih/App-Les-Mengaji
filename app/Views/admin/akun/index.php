@@ -31,8 +31,8 @@
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Manajemen Akun</h1>
-            <p class="text-sm text-slate-500 mt-1">Kelola hak akses pengguna aplikasi untuk Admin, Guru, dan Orang Tua.
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Kelola Akun </h1>
+            <p class="text-sm text-slate-500 mt-1">Hak akses pengguna aplikasi untuk Admin, Guru, dan Orang Tua.
             </p>
         </div>
 
@@ -103,14 +103,6 @@
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-
-        <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div class="relative w-full md:w-80">
-                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" placeholder="Cari username atau email..."
-                    class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-            </div>
-        </div>
 
         <div class="overflow-x-auto">
 
