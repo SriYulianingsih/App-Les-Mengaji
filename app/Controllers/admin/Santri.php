@@ -175,6 +175,8 @@ class Santri extends BaseController
         $santri = $this->santri->find($id);
         $file = $this->request->getFile('foto');
         $namaFoto = $santri['foto'];
+        $status = $this->request->getPost('status');
+        $kelasId = $this->request->getPost('kelas_id');
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             if ($namaFoto && file_exists('uploads/santri/' . $namaFoto)) {
@@ -184,18 +186,22 @@ class Santri extends BaseController
             $file->move('uploads/santri', $namaFoto);
         }
 
+        if ($status === 'non-aktif') {
+            $kelasId = null;
+        }
+
         $this->santri->update($id, [
             'nis'                 => $nis,
             'nama'                => $nama,
             'orangtua_id'         => $this->request->getPost('orangtua_id'),
-            'kelas_id'            => $this->request->getPost('kelas_id'),
+            'kelas_id'            => $kelasId,
             'jenis_kelamin'       => $this->request->getPost('jenis_kelamin'),
             'tempat_lahir'        => $this->request->getPost('tempat_lahir'),
             'tanggal_lahir'       => $this->request->getPost('tanggal_lahir'),
             'alamat'              => $this->request->getPost('alamat'),
             'pendidikan_terakhir' => $this->request->getPost('pendidikan_terakhir'),
             'tanggal_daftar'      => $this->request->getPost('tanggal_daftar'),
-            'status'              => $this->request->getPost('status'),
+            'status'              => $status,
             'foto'                => $namaFoto
         ]);
 
