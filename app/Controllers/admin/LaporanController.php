@@ -29,8 +29,6 @@ class LaporanController extends BaseController
                              ->where('tanggal', date('Y-m-d'))
                              ->countAllResults();
 
-        $riwayatLaporan = $this->laporanModel->getFull();
-
         $dataKategori = $db->table('kategori_pembayaran')->get()->getResultArray();
         $dataJadwal   = $db->table('jadwal')
                            ->select('jadwal.id, mapel.nama_mapel, kelas.nama_kelas')
@@ -41,16 +39,15 @@ class LaporanController extends BaseController
         $bulan_list = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
         $data = [
-            'title'           => 'Laporan & Rekapitulasi',
-            'riwayat_laporan' => $riwayatLaporan,
-            'ringkasan'       => [
+            'title'         => 'Laporan & Rekapitulasi',
+            'ringkasan'     => [
                 'total_santri'     => $totalSantri,
                 'total_kas'        => $totalKasMasuk,
                 'absensi_hari_ini' => $absensiHariIni
             ],
-            'kategori_list'   => $dataKategori,
-            'jadwal_list'     => $dataJadwal,
-            'bulan_list'      => $bulan_list
+            'kategori_list' => $dataKategori,
+            'jadwal_list'   => $dataJadwal,
+            'bulan_list'    => $bulan_list
         ];
 
         return view('admin/laporan/index', $data);
@@ -109,8 +106,58 @@ class LaporanController extends BaseController
         }
 
         $this->laporanModel->save($data);
+        $laporanId = $this->laporanModel->getInsertID();
 
-        return redirect()->to('/admin/laporan')->with('success', 'Riwayat laporan berhasil dicatat!');
+        // Jika permintaan via AJAX, kembalikan JSON agar frontend bisa mengunduh PDF tanpa pindah tab
+        $filename = "Laporan_" . ucfirst($tipe) . "_" . str_replace(' ', '_', $this->getNamaBulan($bulan)) . "_" . $tahun . ".pdf";
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON(['success' => true, 'id' => $laporanId, 'filename' => $filename]);
+        }
+
+        return redirect()->to('/admin/laporan/cetakPdf/' . $laporanId);
+    }
+
+    // AJAX: Periksa apakah data untuk periode yang dipilih ada di DB
+    public function check()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(400)->setJSON(['exists' => false, 'message' => 'Invalid request']);
+        }
+
+        $db = \Config\Database::connect();
+        $tipe = $this->request->getPost('tipe_laporan');
+        $bulan = (int)$this->request->getPost('periode_bulan');
+        $tahun = (int)$this->request->getPost('periode_tahun');
+
+        if (empty($tipe) || empty($bulan) || empty($tahun)) {
+            return $this->response->setJSON(['exists' => false, 'message' => 'Periode tidak lengkap']);
+        }
+
+        if ($tipe === 'pembayaran') {
+            $query = $db->table('pembayaran')
+                        ->where('bulan', $bulan)
+                        ->where('tahun', $tahun);
+
+            $kategori = $this->request->getPost('kategori_id');
+            if (!empty($kategori)) {
+                $query->where('kategori_id', $kategori);
+            }
+
+            $count = $query->countAllResults();
+        } else {
+            $query = $db->table('absensi')
+                        ->where('MONTH(tanggal)', $bulan)
+                        ->where('YEAR(tanggal)', $tahun);
+
+            $jadwal = $this->request->getPost('jadwal_id');
+            if (!empty($jadwal)) {
+                $query->where('jadwal_id', $jadwal);
+            }
+
+            $count = $query->countAllResults();
+        }
+
+        return $this->response->setJSON(['exists' => ($count > 0), 'count' => $count]);
     }
 
     // 3. FUNGSI CETAK PDF (FIKSED QUERY)

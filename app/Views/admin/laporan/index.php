@@ -153,100 +153,14 @@
                     <button type="submit"
                         class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-3 rounded-xl text-sm shadow-md shadow-emerald-200 transition-all flex items-center justify-center gap-2 mt-2 group">
                         <i class="fas fa-save group-hover:scale-110 transition-transform"></i>
-                        Simpan Arsip Log
+                        Simpan Laporan
                     </button>
                 </form>
             </div>
         </div>
 
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-800">Arsip & Log Laporan</h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Daftar riwayat laporan yang sudah digenerate.</p>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-600">
-                        <thead
-                            class="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100 font-bold">
-                            <tr>
-                                <th class="px-6 py-4">Informasi Laporan</th>
-                                <th class="px-6 py-4">Periode</th>
-                                <th class="px-6 py-4">Admin</th>
-                                <th class="px-6 py-4 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <?php if (empty($riwayat_laporan)) : ?>
-                            <tr>
-                                <td colspan="4" class="px-6 py-12 text-center text-slate-400">
-                                    <div class="flex flex-col items-center">
-                                        <i class="fas fa-folder-open text-4xl mb-3 text-slate-200"></i>
-                                        <p class="text-sm">Belum ada riwayat laporan.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php else : ?>
-                            <?php foreach ($riwayat_laporan as $l) : ?>
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="px-6 py-4">
-                                    <div class="flex flex-col">
-                                        <span class="font-bold text-slate-800">
-                                            <?= $l['tipe_laporan'] === 'pembayaran' ? '💰 Keuangan & SPP' : '📝 Absensi Santri' ?>
-                                        </span>
-                                        <span class="text-[10px] text-slate-400 mt-1 uppercase tracking-tight">
-                                            <?php 
-                                                        if($l['tipe_laporan'] === 'pembayaran') echo esc($l['nama_kategori'] ?? 'Semua Kategori');
-                                                        else echo esc(($l['nama_mapel'] ?? 'Semua Mapel')) . ' - ' . esc(($l['nama_kelas'] ?? 'Semua Kelas'));
-                                                    ?>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex flex-col">
-                                        <span class="font-medium text-slate-700">
-                                            <?php 
-                                                        $bulan_idx = (int)$l['periode_bulan'];
-                                                        echo $bulan_list[$bulan_idx-1] . " " . $l['periode_tahun'];
-                                                    ?>
-                                        </span>
-                                        <span class="text-[10px] text-slate-400 font-medium">Cetak:
-                                            <?= date('d/m/Y', strtotime($l['tanggal_cetak'])) ?></span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span
-                                        class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                                        <i class="fas fa-user-shield mr-1"></i>
-                                        <?= strtoupper(esc((string)($l['nama_admin'] ?? 'ADMIN'))) ?>
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <a href="/admin/laporan/cetakPdf/<?= $l['id'] ?>" target="_blank"
-                                            class="w-9 h-9 rounded-xl text-rose-600 hover:text-white hover:bg-rose-600 inline-flex items-center justify-center transition-all border border-rose-100 hover:border-rose-600 shadow-sm"
-                                            title="Download PDF">
-                                            <i class="fas fa-file-pdf"></i>
-                                        </a>
-                                        <a href="/admin/laporan/delete/<?= $l['id'] ?>"
-                                            onclick="return confirm('Hapus permanen arsip ini?')"
-                                            class="w-9 h-9 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 inline-flex items-center justify-center transition-all border border-slate-100 hover:border-slate-800 shadow-sm"
-                                            title="Hapus">
-                                            <i class="fas fa-trash-alt text-xs"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </div>
+</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -262,6 +176,95 @@ $(document).ready(function() {
             $('#wrapper_kategori').addClass('hidden');
             $('#wrapper_jadwal').removeClass('hidden');
         }
+    });
+
+    // Intercept form submit to validate period exists via AJAX and open PDF in new tab
+    function showAlert(type, message) {
+        $('#laporan-alert').remove();
+        let html = '';
+        if (type === 'success') {
+            html =
+                '<div id="laporan-alert" class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 px-4 py-3.5 rounded-xl mb-6 shadow-sm flex items-start gap-3">' +
+                '<i class="fas fa-check-circle text-emerald-500 mt-0.5"></i>' +
+                '<div><span class="text-sm font-bold">Berhasil!</span><p class="text-xs text-emerald-700 mt-0.5">' +
+                message + '</p></div></div>';
+        } else {
+            html =
+                '<div id="laporan-alert" class="bg-rose-50 border-l-4 border-rose-500 text-rose-800 px-4 py-3.5 rounded-xl mb-6 shadow-sm flex items-start gap-3">' +
+                '<i class="fas fa-exclamation-circle text-rose-500 mt-0.5"></i>' +
+                '<div><span class="text-sm font-bold">Gagal!</span><p class="text-xs text-rose-700 mt-0.5">' +
+                message + '</p></div></div>';
+        }
+        // prepend to nearest container
+        $('form[action="/admin/laporan/generate"]').closest('.container').prepend(html);
+        // auto-hide after 5 seconds
+        setTimeout(function() {
+            $('#laporan-alert').fadeOut(300, function() {
+                $(this).remove();
+            });
+        }, 5000);
+    }
+
+    $('form[action="/admin/laporan/generate"]').on('submit', function(e) {
+        e.preventDefault();
+        let form = $(this);
+        let submitBtn = form.find('button[type=submit]');
+        submitBtn.prop('disabled', true).addClass('opacity-60');
+
+        $.post('/admin/laporan/check', form.serialize(), function(resp) {
+            if (resp && resp.exists) {
+                // generate via AJAX so we can open PDF in new tab and keep user on page
+                $.post('/admin/laporan/generate', form.serialize(), function(result) {
+                    if (result && result.success && result.id) {
+                        // Fetch PDF as blob and trigger download without opening a new tab
+                        fetch('/admin/laporan/cetakPdf/' + result.id, {
+                                credentials: 'same-origin'
+                            })
+                            .then(function(res) {
+                                if (!res.ok) throw new Error('Gagal mengunduh PDF');
+                                return res.blob();
+                            })
+                            .then(function(blob) {
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.style.display = 'none';
+                                a.href = url;
+                                a.download = result.filename || ('Laporan_' + Date
+                                    .now() + '.pdf');
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                                window.URL.revokeObjectURL(url);
+                                showAlert('success',
+                                    'Laporan berhasil dibuat dan sedang diunduh.'
+                                    );
+                                submitBtn.prop('disabled', false).removeClass(
+                                    'opacity-60');
+                            }).catch(function(err) {
+                                showAlert('error', err.message ||
+                                    'Gagal mengunduh PDF.');
+                                submitBtn.prop('disabled', false).removeClass(
+                                    'opacity-60');
+                            });
+                        submitBtn.prop('disabled', false).removeClass('opacity-60');
+                    } else {
+                        showAlert('error', result && result.message ? result.message :
+                            'Gagal membuat laporan.');
+                        submitBtn.prop('disabled', false).removeClass('opacity-60');
+                    }
+                }, 'json').fail(function() {
+                    showAlert('error', 'Terjadi error saat generate laporan.');
+                    submitBtn.prop('disabled', false).removeClass('opacity-60');
+                });
+            } else {
+                showAlert('error', resp && resp.message ? resp.message :
+                    'Tidak ada data untuk periode yang dipilih.');
+                submitBtn.prop('disabled', false).removeClass('opacity-60');
+            }
+        }).fail(function() {
+            showAlert('error', 'Terjadi error saat memeriksa periode.');
+            submitBtn.prop('disabled', false).removeClass('opacity-60');
+        });
     });
 });
 </script>

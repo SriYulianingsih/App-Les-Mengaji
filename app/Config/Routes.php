@@ -97,6 +97,7 @@ $routes->group('pembayaran', function($routes) {
 $routes->group('laporan', function($routes) {
     $routes->get('/', 'LaporanController::index');
     $routes->post('generate', 'LaporanController::generate');
+    $routes->post('check', 'LaporanController::check');
     $routes->get('delete/(:num)', 'LaporanController::delete/$1');
     
     // Kita arahkan segment 'cetakPdf' ke fungsi cetakPdf di Controller
